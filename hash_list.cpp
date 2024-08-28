@@ -1,18 +1,82 @@
 #include "hash_list.h"
-
-hash_list::hash_list() {}
+#include <iostream>
+hash_list::hash_list() : size(0), head(NULL) {}
 
 /**-----------------------------------------------------------------------------------
  * START Part 1
  *------------------------------------------------------------------------------------*/
 
-void hash_list::insert(int key, float value) {}
+void hash_list::insert(int key, float value) {
+    node* target = head;
 
-std::optional<float> hash_list::get_value(int key) const { return std::nullopt; }
+    // Search list for any matching key
+    while (target != NULL) {
+        std::cout << target->key << " , " << target->value << std::endl;
+        if (target->key == key) {
+            // Updating the key if there is a match
+            target->value = value; 
+            return;
+        }
+        target = target->next;
+    }
 
-bool hash_list::remove(int key) { return false; }
+    //If the key doesn't exist, insert new node
+    node* newNode = new node;
+    newNode->key = key;
+    newNode->value = value;
+    newNode->next = head;
+    head = newNode;
+    size++;
+}
 
-size_t hash_list::get_size() const { return 0; }
+std::optional<float> hash_list::get_value(int key) const {
+    // Setting the index to the start of the list
+    node* current = head;
+
+    // increment to the end of the list
+    while (current != NULL) {
+        // If the current indexed key is the correct value, then return
+        if (current->key == key) {
+            return current->value;
+        }
+        // Else increment to the next node
+        current = current->next;
+    }
+    // Optional return if the value isn't found
+    return std::nullopt; 
+    }
+
+bool hash_list::remove(int key) { 
+    // Checking if first node is the key match
+    if (head != nullptr && head->key == key) {
+        node* temp = head;
+        head = head->next;
+        delete temp;
+        size--;
+        return true;
+    }
+
+    // Going through list to find node to remove
+    node* current = head;
+    while (current != NULL && current->next != NULL) {
+        if (current->next->key == key) {
+            node* temp = current->next;
+            current->next = current->next->next;
+            delete temp;
+            size--;
+            return true;
+        }
+        current = current->next;
+    }
+
+    // Key wasn't found
+    return false; 
+}
+
+size_t hash_list::get_size() const { 
+    
+    return size; 
+}
 
 hash_list::~hash_list() {}
 
